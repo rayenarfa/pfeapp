@@ -9,8 +9,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import Stripe from "stripe";
 
-// Load environment variables
-dotenv.config();
+// Load environment variables from .env.local
+dotenv.config({ path: './.env.local' });
+
+// For debugging - log that we're trying to load environment variables
+console.log('Loading environment variables from .env.local');
 
 // Initialize Express app
 const app = express();
