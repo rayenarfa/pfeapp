@@ -1,4 +1,32 @@
 import React, { useState } from "react";
+
+// List of Tunisian governorates
+const TUNISIAN_GOVERNORATES = [
+  "Tunis",
+  "Ariana",
+  "Ben Arous",
+  "Manouba",
+  "Bizerte",
+  "Nabeul",
+  "Zaghouan",
+  "Beja",
+  "Jendouba",
+  "El Kef",
+  "Siliana",
+  "Kairouan",
+  "Kasserine",
+  "Sidi Bouzid",
+  "Sousse",
+  "Monastir",
+  "Mahdia",
+  "Sfax",
+  "Gabes",
+  "Medenine",
+  "Tataouine",
+  "Gafsa",
+  "Tozeur",
+  "Kebili"
+];
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../components/layout/Navbar";
 import { useCart } from "../../context/CartContext";
@@ -28,7 +56,6 @@ interface FormData {
   email: string;
   address: string;
   city: string;
-  state: string;
   zipCode: string;
 }
 
@@ -53,7 +80,6 @@ const CheckoutForm = () => {
     email: "",
     address: "",
     city: "",
-    state: "",
     zipCode: "",
   });
 
@@ -94,11 +120,13 @@ const CheckoutForm = () => {
     }
 
     if (!formData.address.trim()) errors.address = "Address is required";
-    if (!formData.city.trim()) errors.city = "City is required";
-    if (!formData.state.trim())
-      errors.state = "State/Province/Region is required";
-    if (!formData.zipCode.trim())
-      errors.zipCode = "Postal/ZIP code is required";
+    if (!formData.city.trim()) errors.city = "Governorate is required";
+    
+    if (!formData.zipCode.trim()) {
+      errors.zipCode = "Postal code is required";
+    } else if (!/^\d{4}$/.test(formData.zipCode)) {
+      errors.zipCode = "Postal code must be exactly 4 digits";
+    }
 
     // Check if cart is empty
     if (cartItems.length === 0) {
@@ -163,7 +191,6 @@ const CheckoutForm = () => {
         email: formData.email,
         address: formData.address,
         city: formData.city,
-        state: formData.state,
         zipCode: formData.zipCode,
       });
 
@@ -177,7 +204,6 @@ const CheckoutForm = () => {
           email: formData.email,
           address: formData.address,
           city: formData.city,
-          state: formData.state,
           zipCode: formData.zipCode,
         }
       );
@@ -189,17 +215,20 @@ const CheckoutForm = () => {
       }
 
       // 5. Create order in Firestore (which is available in free tier)
+      // Add empty state property for backward compatibility with existing order creation system
+      const shippingAddressWithState = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        address: formData.address,
+        city: formData.city,
+        zipCode: formData.zipCode,
+        state: "", // Add empty state for compatibility
+      };
+      
       const orderId = await createOrder(
         cartItems,
-        {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          zipCode: formData.zipCode,
-        },
+        shippingAddressWithState,
         {
           cardType: "Credit Card",
           lastFour: "4242", // Simulated last 4 digits
@@ -499,10 +528,9 @@ const CheckoutForm = () => {
                             htmlFor="city"
                             className="block text-sm font-medium text-gray-700 mb-1"
                           >
-                            City
+                            Governorate
                           </label>
-                          <input
-                            type="text"
+                          <select
                             id="city"
                             name="city"
                             value={formData.city}
@@ -513,42 +541,21 @@ const CheckoutForm = () => {
                                 ? "border-red-500"
                                 : "border-gray-300"
                             } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
-                          />
+                          >
+                            <option value="">Select a governorate</option>
+                            {TUNISIAN_GOVERNORATES.map(governorate => (
+                              <option key={governorate} value={governorate}>
+                                {governorate}
+                              </option>
+                            ))}
+                          </select>
                           {fieldErrors.city && (
                             <p className="mt-1 text-sm text-red-600">
                               {fieldErrors.city}
                             </p>
                           )}
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label
-                              htmlFor="state"
-                              className="block text-sm font-medium text-gray-700 mb-1"
-                            >
-                              State/Province/Region
-                            </label>
-                            <input
-                              type="text"
-                              id="state"
-                              name="state"
-                              value={formData.state}
-                              onChange={handleChange}
-                              required
-                              className={`w-full p-2 border ${
-                                fieldErrors.state
-                                  ? "border-red-500"
-                                  : "border-gray-300"
-                              } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
-                              placeholder="Enter state or region"
-                              autoComplete="off"
-                            />
-                            {fieldErrors.state && (
-                              <p className="mt-1 text-sm text-red-600">
-                                {fieldErrors.state}
-                              </p>
-                            )}
-                          </div>
+                        <div>
                           <div>
                             <label
                               htmlFor="zipCode"
@@ -563,13 +570,21 @@ const CheckoutForm = () => {
                               value={formData.zipCode}
                               onChange={handleChange}
                               required
+                              pattern="[0-9]{4}"
+                              maxLength={4}
                               className={`w-full p-2 border ${
                                 fieldErrors.zipCode
                                   ? "border-red-500"
                                   : "border-gray-300"
                               } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
-                              placeholder="Enter postal code"
+                              placeholder="4-digit postal code"
                               autoComplete="off"
+                              onInput={(e) => {
+                                e.currentTarget.value = e.currentTarget.value.replace(
+                                  /[^0-9]/g,
+                                  ""
+                                ).slice(0, 4);
+                              }}
                             />
                             {fieldErrors.zipCode && (
                               <p className="mt-1 text-sm text-red-600">

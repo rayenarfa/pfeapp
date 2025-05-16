@@ -6,6 +6,9 @@ import { Order, getUserOrders } from "../../utils/orderUtils";
 import { Timestamp } from "firebase/firestore";
 import { auth } from "../../config/firebase/firebaseConfig";
 import Footer from "../../components/layout/Footer";
+import { getInvoiceDataUrl } from "../../utils/invoiceUtils";
+import { sendInvoiceEmail } from "../../utils/emailService";
+import { toast } from "sonner";
 
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -16,6 +19,8 @@ const Orders: React.FC = () => {
     orderId: string;
     itemId: string;
   } | null>(null);
+  const [downloadingInvoiceId, setDownloadingInvoiceId] = useState<string | null>(null);
+  const [sendingInvoiceId, setSendingInvoiceId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -56,6 +61,44 @@ const Orders: React.FC = () => {
     } else {
       setExpandedOrder(orderId);
       setExpandedGiftCard(null); // Close any open gift card when toggling orders
+    }
+  };
+
+  // Handle invoice download for a specific order
+  const handleDownloadInvoice = async (order: Order) => {
+    try {
+      setDownloadingInvoiceId(order.id);
+      const dataUrl = await getInvoiceDataUrl(order);
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `Invoice_${order.orderNumber}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success('Invoice downloaded successfully');
+    } catch (error) {
+      console.error('Failed to generate invoice:', error);
+      toast.error('Failed to download invoice');
+    } finally {
+      setDownloadingInvoiceId(null);
+    }
+  };
+
+  // Handle sending invoice via email for a specific order
+  const handleSendInvoiceEmail = async (order: Order) => {
+    try {
+      setSendingInvoiceId(order.id);
+      const result = await sendInvoiceEmail(order);
+      if (result.success) {
+        toast.success('Invoice sent to your email');
+      } else {
+        toast.error(`Failed to send invoice: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Failed to send invoice email:', error);
+      toast.error('Failed to send invoice to your email');
+    } finally {
+      setSendingInvoiceId(null);
     }
   };
 
@@ -277,6 +320,80 @@ const Orders: React.FC = () => {
                             </div>
                           </div>
 
+                          {/* Invoice Section */}
+                          <div className="px-4 py-4 sm:px-6">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-medium text-gray-700">Invoice</h4>
+                              <div className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full flex items-center">
+                                <svg
+                                  className="w-3 h-3 mr-1"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                  />
+                                </svg>
+                                Available for download
+                              </div>
+                            </div>
+                            <div className="bg-gray-50 p-4 rounded-md border border-green-100 mb-4">
+                              <p className="text-xs text-gray-500 mb-3">
+                                You can download your invoice or have it sent to your email address.
+                              </p>
+                              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                                <button
+                                  onClick={() => handleDownloadInvoice(order)}
+                                  disabled={downloadingInvoiceId === order.id}
+                                  className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-70"
+                                >
+                                  {downloadingInvoiceId === order.id ? (
+                                    <>
+                                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                      </svg>
+                                      Processing...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                      </svg>
+                                      Download Invoice
+                                    </>
+                                  )}
+                                </button>
+                                <button
+                                  onClick={() => handleSendInvoiceEmail(order)}
+                                  disabled={sendingInvoiceId === order.id}
+                                  className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70"
+                                >
+                                  {sendingInvoiceId === order.id ? (
+                                    <>
+                                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                      </svg>
+                                      Sending...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                      </svg>
+                                      Email Invoice
+                                    </>
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
                           <div className="px-4 py-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                             <div>
                               <h4 className="font-medium text-gray-700 mb-2">
@@ -292,7 +409,6 @@ const Orders: React.FC = () => {
                                 </p>
                                 <p className="text-gray-600">
                                   {order.shippingAddress.city},{" "}
-                                  {order.shippingAddress.state}{" "}
                                   {order.shippingAddress.zipCode}
                                 </p>
                                 <p className="text-gray-600 mt-1">

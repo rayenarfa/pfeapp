@@ -6,12 +6,17 @@ import { motion } from "framer-motion";
 import { getOrderById } from "../../utils/orderUtils";
 import { Order, OrderItem } from "../../types/OrderTypes";
 import { Timestamp } from "firebase/firestore";
+import { getInvoiceDataUrl } from "../../utils/invoiceUtils";
+import { sendInvoiceEmail } from "../../utils/emailService";
+import { toast } from "sonner";
 
 const OrderConfirmationPage: React.FC = () => {
   const { clearCart } = useCart();
   const [isLoading, setIsLoading] = useState(true);
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isDownloadingInvoice, setIsDownloadingInvoice] = useState(false);
+  const [isSendingInvoice, setIsSendingInvoice] = useState(false);
 
   const location = useLocation();
   const orderId = new URLSearchParams(location.search).get("orderId");
@@ -51,6 +56,50 @@ const OrderConfirmationPage: React.FC = () => {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+  
+  // Handle invoice download
+  const handleDownloadInvoice = async () => {
+    if (!order) return;
+    
+    try {
+      setIsDownloadingInvoice(true);
+      const dataUrl = await getInvoiceDataUrl(order);
+      
+      // Create an anchor element and trigger download
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `Invoice_${order.orderNumber}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast.success('Invoice downloaded successfully');
+    } catch (error) {
+      console.error('Failed to generate invoice:', error);
+      toast.error('Failed to download invoice');
+    } finally {
+      setIsDownloadingInvoice(false);
+    }
+  };
+  
+  // Handle sending invoice via email
+  const handleSendInvoiceEmail = async () => {
+    if (!order) return;
+    
+    try {
+      setIsSendingInvoice(true);
+      const result = await sendInvoiceEmail(order);
+      if (result.success) {
+        toast.success('Invoice sent to your email!');
+      } else {
+        toast.error(result.message || 'Failed to send invoice. Please try again.');
+      }
+    } catch (error) {
+      toast.error('Failed to send invoice. Please try again.');
+    } finally {
+      setIsSendingInvoice(false);
+    }
   };
 
   return (
@@ -199,7 +248,6 @@ const OrderConfirmationPage: React.FC = () => {
                             </p>
                             <p className="text-sm text-gray-600">
                               {order.shippingAddress.city},{" "}
-                              {order.shippingAddress.state}{" "}
                               {order.shippingAddress.zipCode}
                             </p>
                           </div>
@@ -313,6 +361,80 @@ const OrderConfirmationPage: React.FC = () => {
                           If you have any questions about your order, please
                           contact our customer support.
                         </p>
+
+                        {/* Invoice Section */}
+                        <div className="mt-6 mb-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-medium text-gray-700">Invoice</h3>
+                            <div className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full flex items-center">
+                              <svg
+                                className="w-3 h-3 mr-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                              </svg>
+                              Available for download
+                            </div>
+                          </div>
+                          <div className="bg-gray-50 p-4 rounded-md border border-green-100">
+                            <p className="text-xs text-gray-500 mb-3">
+                              You can download your invoice or have it sent to your email address.
+                            </p>
+                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                              <button
+                                onClick={handleDownloadInvoice}
+                                disabled={isDownloadingInvoice}
+                                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-70"
+                              >
+                                {isDownloadingInvoice ? (
+                                  <>
+                                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Processing...
+                                  </>
+                                ) : (
+                                  <>
+                                    <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                    Download Invoice
+                                  </>
+                                )}
+                              </button>
+                              <button
+                                onClick={handleSendInvoiceEmail}
+                                disabled={isSendingInvoice}
+                                className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70"
+                              >
+                                {isSendingInvoice ? (
+                                  <>
+                                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Sending...
+                                  </>
+                                ) : (
+                                  <>
+                                    <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    Email Invoice
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
 
                         <div className="flex justify-center mt-6 space-x-4">
                           <Link

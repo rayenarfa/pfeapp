@@ -40,20 +40,20 @@ const FormInput: React.FC<FormInputProps> = ({
   const inputClass = `w-full px-3 sm:px-4 py-3 ${
     icon ? "pl-9 sm:pl-10" : ""
   } rounded-lg 
-    bg-gray-50 dark:bg-gray-700/60 
+    bg-gray-50 
     border ${
       error
-        ? "border-red-300 dark:border-red-600"
+        ? "border-red-300"
         : isFocused
-        ? "border-indigo-500 dark:border-indigo-400"
-        : "border-gray-300 dark:border-gray-600"
+        ? "border-indigo-500"
+        : "border-gray-300"
     } 
-    text-sm sm:text-base text-gray-900 dark:text-white 
-    placeholder-gray-400 dark:placeholder-gray-500
+    text-sm sm:text-base text-gray-900 
+    placeholder-gray-400
     focus:outline-none focus:ring-2 ${
       error
-        ? "focus:ring-red-100 dark:focus:ring-red-900/30"
-        : "focus:ring-indigo-100 dark:focus:ring-indigo-900/30"
+        ? "focus:ring-red-100"
+        : "focus:ring-indigo-100"
     }
     transition-all duration-200
     ${disabled ? "opacity-60 cursor-not-allowed" : ""}
@@ -99,7 +99,7 @@ const FormInput: React.FC<FormInputProps> = ({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-3 text-gray-400 hover:text-gray-600"
             tabIndex={-1}
             aria-label={showPassword ? "Hide password" : "Show password"}
           >

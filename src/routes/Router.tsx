@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import emailjs from "@emailjs/browser";
 import { auth, db } from "../config/firebase/firebaseConfig";
 import { onSnapshot, doc } from "firebase/firestore";
 import { toast } from "sonner";
@@ -10,6 +9,7 @@ import NotFound from "../pages/errors/ErrorPage";
 import Home from "../pages/home/Home";
 import SignIn from "../pages/auth/SignIn";
 import SignUp from "../pages/auth/SignUp";
+import ResetPassword from "../pages/auth/ResetPassword";
 import CompleteProfile from "../pages/auth/CompleteProfile";
 import Profile from "../pages/user/Profile";
 import Cart from "../pages/user/Cart";
@@ -28,13 +28,7 @@ import Contact from "../pages/info/Contact";
 import About from "../pages/info/About";
 import { Toaster } from "sonner";
 
-// Your EmailJS public key from environment variables
-const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-
-// Check if the key is available to prevent runtime errors
-if (!PUBLIC_KEY) {
-  console.error('EmailJS public key is missing. Check your .env.local file.');
-}
+// Email service has been migrated to Nodemailer
 
 /**
  * Main Router component that:
@@ -47,16 +41,15 @@ const Router = () => {
   const [initializing, setInitializing] = useState(true);
 
   /**
-   * Initializes the EmailJS service for sending emails
-   * Sets initialization state once complete
+   * Initializes services and handles application setup
    */
   useEffect(() => {
     const initializeServices = async () => {
       try {
-        await emailjs.init(PUBLIC_KEY);
-        console.log("EmailJS initialized with public key");
+        // Services initialization code would go here
+        console.log("App services initialized");
       } catch (error) {
-        console.error("Failed to initialize EmailJS:", error);
+        console.error("Failed to initialize services:", error);
       } finally {
         setInitializing(false);
       }
@@ -123,6 +116,7 @@ const Router = () => {
           <Route path="*" element={<NotFound />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/account-blocked" element={<AccountBlocked />} />
           <Route path="/complete-profile" element={<CompleteProfile />} />
           <Route path="/profile" element={<Profile />} />

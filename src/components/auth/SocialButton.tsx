@@ -38,7 +38,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         </svg>
       ),
       colors:
-        "bg-white hover:bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200",
+        "bg-white hover:bg-gray-50 text-gray-700",
     },
     github: {
       name: "GitHub",
@@ -87,7 +87,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       disabled={disabled}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      className={`relative w-full flex items-center justify-center gap-2 sm:gap-3 py-3.5 px-3 sm:px-4 rounded-lg border border-gray-300 dark:border-gray-600 ${
+      className={`relative w-full flex items-center justify-center gap-2 sm:gap-3 py-3.5 px-3 sm:px-4 rounded-lg border border-gray-300 ${
         config.colors
       } text-sm sm:text-base font-medium transition-all duration-200 ${
         disabled ? "opacity-60 cursor-not-allowed" : ""

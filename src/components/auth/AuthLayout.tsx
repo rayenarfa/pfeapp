@@ -9,7 +9,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden">
       {/* Background gradient - improved for mobile */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-100 dark:from-gray-900 dark:via-indigo-950 dark:to-purple-950 -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-100 -z-10" />
 
       {/* Animated background shapes - optimized for mobile */}
       <div className="absolute inset-0 overflow-hidden -z-5">
@@ -27,7 +27,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
               ease: "easeInOut",
             },
           }}
-          className="absolute w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] rounded-full bg-blue-300 dark:bg-blue-800 blur-2xl sm:blur-3xl -top-[200px] sm:-top-[300px] -left-[200px] sm:-left-[300px]"
+          className="absolute w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] rounded-full bg-blue-300 blur-2xl sm:blur-3xl -top-[200px] sm:-top-[300px] -left-[200px] sm:-left-[300px]"
         />
         {/* Shape 2 - reduced size and blur on mobile */}
         <motion.div
@@ -43,7 +43,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
               ease: "easeInOut",
             },
           }}
-          className="absolute w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] rounded-full bg-purple-300 dark:bg-purple-800 blur-2xl sm:blur-3xl -bottom-[200px] sm:-bottom-[300px] -right-[200px] sm:-right-[300px]"
+          className="absolute w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] rounded-full bg-purple-300 blur-2xl sm:blur-3xl -bottom-[200px] sm:-bottom-[300px] -right-[200px] sm:-right-[300px]"
         />
         {/* Shape 3 - reduced size and blur on mobile */}
         <motion.div
@@ -58,7 +58,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
               ease: "easeInOut",
             },
           }}
-          className="absolute w-[200px] sm:w-[300px] h-[200px] sm:h-[300px] rounded-full bg-indigo-300 dark:bg-indigo-800 blur-2xl sm:blur-3xl top-[50%] left-[10%] transform -translate-y-1/2"
+          className="absolute w-[200px] sm:w-[300px] h-[200px] sm:h-[300px] rounded-full bg-indigo-300 blur-2xl sm:blur-3xl top-[50%] left-[10%] transform -translate-y-1/2"
         />
       </div>
 
@@ -77,13 +77,13 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6 }}
             >
-              <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
+              <h1 className="text-4xl font-bold mb-6 text-gray-900">
                 Welcome to{" "}
-                <span className="text-indigo-600 dark:text-indigo-400">
+                <span className="text-indigo-600">
                   SharePay
                 </span>
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
+              <p className="text-lg text-gray-600 mb-8">
                 Your premier destination for discovering and purchasing gift
                 cards for any occasion.
               </p>
@@ -97,9 +97,9 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             >
               {/* Feature points */}
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-indigo-100 bg-indigo-100 flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-5 h-5 text-indigo-600 dark:text-indigo-400"
+                    className="w-5 h-5 text-indigo-600 "
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -113,10 +113,10 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-gray-900 dark:text-white font-medium mb-1">
+                  <h3 className=" font-medium mb-1">
                     Premium Gift Cards
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  <p className="text-gray-600  text-sm">
                     Discover a wide selection of gift cards from top brands
                     worldwide.
                   </p>
@@ -124,9 +124,9 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-indigo-100 bg-indigo-100 flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-5 h-5 text-indigo-600 dark:text-indigo-400"
+                    className="w-5 h-5 text-indigo-600 "
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -140,10 +140,10 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-gray-900 dark:text-white font-medium mb-1">
+                  <h3 className=" font-medium mb-1">
                     Instant Delivery
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  <p className="text-gray-600  text-sm">
                     Get your digital gift cards delivered instantly to your
                     email.
                   </p>
@@ -151,9 +151,9 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-indigo-100 bg-indigo-100 flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-5 h-5 text-indigo-600 dark:text-indigo-400"
+                    className="w-5 h-5 text-indigo-600 "
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -167,10 +167,10 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-gray-900 dark:text-white font-medium mb-1">
+                  <h3 className=" font-medium mb-1">
                     Secure & Verified
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  <p className="text-gray-600  text-sm">
                     All gift cards are guaranteed authentic and securely
                     processed.
                   </p>

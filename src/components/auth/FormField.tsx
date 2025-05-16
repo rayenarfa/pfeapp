@@ -71,7 +71,7 @@ const FormField: React.FC<FormFieldProps> = ({
           onBlur={() => setFocused(false)}
           required={required}
           autoComplete={autoComplete}
-          className="w-full outline-none bg-transparent text-gray-800 dark:text-white"
+          className="w-full outline-none bg-transparent text-gray-800"
         />
         {isPassword && (
           <button

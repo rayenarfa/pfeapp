@@ -292,7 +292,7 @@ const SignUp: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="p-4 mb-6 text-sm bg-red-100 border-l-4 border-red-500 text-red-700 rounded-md dark:bg-red-900/20 dark:text-red-400"
+            className="p-4 mb-6 text-sm bg-red-100 border-l-4 border-red-500 text-red-700 rounded-md"
           >
             {errorMessage}
           </motion.div>
@@ -365,7 +365,7 @@ const SignUp: React.FC = () => {
             autoComplete="new-password"
           />
 
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-gray-500">
             Password must be at least 6 characters long
           </p>
 
@@ -420,10 +420,10 @@ const SignUp: React.FC = () => {
 
         <div className="relative py-4 sm:py-5 mt-4 sm:mt-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+            <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-xs sm:text-sm">
-            <span className="px-2 text-gray-500 bg-white dark:bg-gray-800 dark:text-gray-400">
+            <span className="px-2 text-gray-500 bg-white">
               Or continue with
             </span>
           </div>

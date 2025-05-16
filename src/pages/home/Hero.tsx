@@ -54,9 +54,9 @@ const Hero: React.FC<HeroProps> = ({ navigate }) => {
                   transition={{ duration: 0.5, delay: 0.2 }}
                   className="text-lg text-white/90 mb-6 max-w-lg"
                 >
-                  Discover our curated collection of premium payment
-                  solutions. Perfect for sharing costs among friends, family,
-                  or colleagues.
+                  Discover Tunisia's first destination for digital gift cards.
+                  Choose from Steam, Plystation, Amazon, and more - all with instant
+                  delivery and secure transactions.
                 </motion.p>
 
                 <motion.div
@@ -97,7 +97,7 @@ const Hero: React.FC<HeroProps> = ({ navigate }) => {
                     className="absolute top-0 right-0 w-52 h-32 bg-white rounded-xl shadow-2xl overflow-hidden transform rotate-6"
                   >
                     <img
-                      src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=200"
+                      src="https://i.ibb.co/Kz7t4XWC/2025-04-25-13-45-49-amazon-com-usa-webp-720-432-Brave.png"
                       alt="Gift Card"
                       className="w-full h-full object-cover"
                     />
@@ -109,7 +109,7 @@ const Hero: React.FC<HeroProps> = ({ navigate }) => {
                     className="absolute top-10 left-0 w-52 h-32 bg-white rounded-xl shadow-2xl overflow-hidden transform -rotate-3"
                   >
                     <img
-                      src="https://images.unsplash.com/photo-1607082350899-7e105aa886ae?auto=format&fit=crop&w=200"
+                      src="https://i.ibb.co/gZshXJMt/2025-04-25-13-44-50-steam-usa-webp-720-432-Brave.png"
                       alt="Gift Card"
                       className="w-full h-full object-cover"
                     />
@@ -121,7 +121,7 @@ const Hero: React.FC<HeroProps> = ({ navigate }) => {
                     className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-52 h-32 bg-white rounded-xl shadow-2xl overflow-hidden"
                   >
                     <img
-                      src="https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?auto=format&fit=crop&w=200"
+                      src="https://cdn.mos.cms.futurecdn.net/uWzrrjPJhUwZhaHPjDYcmn-1200-80.jpg.webp"
                       alt="Gift Card"
                       className="w-full h-full object-cover"
                     />

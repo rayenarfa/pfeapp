@@ -22,7 +22,7 @@ const Label: React.FC<LabelProps> = ({ htmlFor, children, className }) => {
       htmlFor={htmlFor}
       className={twMerge(
         // Default classes that apply by default
-        "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400",
+        "mb-1.5 block text-sm font-medium text-gray-700",
 
         // User-defined className that can override the default margin
         className
@@ -67,16 +67,16 @@ const Input: React.FC<InputProps> = ({
   error = false,
   hint,
 }) => {
-  let inputClasses = ` h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:ring  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 ${className}`;
+  let inputClasses = ` h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:ring ${className}`;
 
   if (disabled) {
-    inputClasses += ` text-gray-500 border-gray-300 opacity-40 bg-gray-100 cursor-not-allowed dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700 opacity-40`;
+    inputClasses += ` text-gray-500 border-gray-300 opacity-40 bg-gray-100 cursor-not-allowed`;
   } else if (error) {
-    inputClasses += `  border-error-500 focus:border-error-300 focus:ring-error-500/20 dark:text-error-400 dark:border-error-500 dark:focus:border-error-800`;
+    inputClasses += `  border-error-500 focus:border-error-300 focus:ring-error-500/20`;
   } else if (success) {
-    inputClasses += `  border-success-500 focus:border-success-300 focus:ring-success-500/20 dark:text-success-400 dark:border-success-500 dark:focus:border-success-800`;
+    inputClasses += `  border-success-500 focus:border-success-300 focus:ring-success-500/20`;
   } else {
-    inputClasses += ` bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90  dark:focus:border-brand-800`;
+    inputClasses += ` bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20`;
   }
 
   return (
@@ -224,7 +224,7 @@ const CompleteProfile: React.FC = () => {
   // If we're still loading initial data, show a loading indicator
   if (!initialDataLoaded) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50">
         <div className="text-center">
           <svg
             className="w-10 h-10 mx-auto animate-spin text-indigo-600"
@@ -246,7 +246,7 @@ const CompleteProfile: React.FC = () => {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          <p className="mt-4 text-indigo-600 dark:text-indigo-400">
+          <p className="mt-4 text-indigo-600">
             Loading profile...
           </p>
         </div>
@@ -255,7 +255,7 @@ const CompleteProfile: React.FC = () => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4 sm:p-6 md:p-8">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 p-4 sm:p-6 md:p-8">
       {/* Background design elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute top-16 left-10 w-32 h-32 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
@@ -267,7 +267,7 @@ const CompleteProfile: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative w-full max-w-md mx-auto backdrop-blur-sm bg-white/90 dark:bg-gray-800/90 rounded-2xl shadow-lg overflow-hidden z-10"
+        className="relative w-full max-w-md mx-auto backdrop-blur-sm bg-white/90 rounded-2xl shadow-lg overflow-hidden z-10"
       >
         {/* Decorative top border */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
@@ -279,7 +279,7 @@ const CompleteProfile: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="group flex items-center text-indigo-600 dark:text-indigo-400 text-sm font-medium transition-all duration-200 hover:text-indigo-800 dark:hover:text-indigo-300"
+            className="group flex items-center text-indigo-600 text-sm font-medium transition-all duration-200 hover:text-indigo-800"
           >
             <Home className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-300" />
             <span>Home</span>
@@ -292,7 +292,7 @@ const CompleteProfile: React.FC = () => {
           >
             <Link
               to="/profile"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center group"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-500 flex items-center group"
             >
               My Profile
               <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
@@ -308,13 +308,13 @@ const CompleteProfile: React.FC = () => {
             className="space-y-5 sm:space-y-6"
           >
             <motion.div variants={itemVariants} className="text-center">
-              <div className="mb-3 mx-auto bg-indigo-100 dark:bg-indigo-900/40 w-16 h-16 rounded-full flex items-center justify-center">
-                <User className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+              <div className="mb-3 mx-auto bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center">
+                <User className="w-8 h-8 text-indigo-600" />
               </div>
-              <h1 className="mb-2 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="mb-2 text-2xl sm:text-3xl font-bold text-gray-900">
                 Complete Your Profile
               </h1>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+              <p className="text-sm sm:text-base text-gray-600">
                 Please provide the following information to complete your
                 account setup
               </p>
@@ -325,7 +325,7 @@ const CompleteProfile: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="p-3 text-sm bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md dark:bg-red-900/20 dark:text-red-400"
+                className="p-3 text-sm bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md"
               >
                 {errorMessage}
               </motion.div>
@@ -421,13 +421,13 @@ const CompleteProfile: React.FC = () => {
 
             <motion.p
               variants={itemVariants}
-              className="mt-5 text-sm text-center text-gray-600 dark:text-gray-400"
+              className="mt-5 text-sm text-center text-gray-600"
             >
               Want to complete this later?{" "}
               <motion.span whileHover={{ scale: 1.05 }}>
                 <Link
                   to="/home"
-                  className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors"
+                  className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
                 >
                   Skip for now
                 </Link>

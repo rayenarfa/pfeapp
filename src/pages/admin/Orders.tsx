@@ -22,6 +22,8 @@ import {
   updateOrderStatus,
 } from "../../utils/orderUtils";
 import { format } from "date-fns";
+import { sendInvoiceEmail } from "../../utils/emailService";
+import { toast } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
 
 const AdminOrders = () => {
@@ -40,6 +42,7 @@ const AdminOrders = () => {
   const [statusUpdateError, setStatusUpdateError] = useState<string | null>(
     null
   );
+  const [sendingInvoiceId, setSendingInvoiceId] = useState<string | null>(null);
   const [users, setUsers] = useState<
     { id: string; email: string; displayName?: string }[]
   >([]);
@@ -186,6 +189,23 @@ const AdminOrders = () => {
       setExpandedOrder(null);
     } else {
       setExpandedOrder(orderId);
+    }
+  };
+
+  const handleSendInvoiceEmail = async (order: Order) => {
+    try {
+      setSendingInvoiceId(order.id);
+      const result = await sendInvoiceEmail(order);
+      if (result.success) {
+        toast.success(`Invoice sent to ${order.customerEmail}`);
+      } else {
+        toast.error(`Failed to send invoice: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Failed to send invoice email:', error);
+      toast.error('Failed to send invoice email');
+    } finally {
+      setSendingInvoiceId(null);
     }
   };
 
@@ -693,7 +713,6 @@ const AdminOrders = () => {
                             </p>
                             <p className="text-gray-600">
                               {order.shippingAddress.city},{" "}
-                              {order.shippingAddress.state}{" "}
                               {order.shippingAddress.zipCode}
                             </p>
                             <p className="text-gray-600 mt-1">
@@ -777,6 +796,44 @@ const AdminOrders = () => {
                         >
                           <Mail className="h-4 w-4 mr-2" />
                           Contact Customer
+                        </button>
+                        <button
+                          onClick={async () => {
+                            const { getInvoiceDataUrl, getInvoiceFilename } = await import('../../utils/invoiceUtils');
+                            const dataUrl = await getInvoiceDataUrl(order);
+                            const link = document.createElement('a');
+                            link.href = dataUrl;
+                            link.download = getInvoiceFilename(order);
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                          }}
+                          className="inline-flex items-center px-3 py-2 border border-green-500 shadow-sm text-sm leading-4 font-medium rounded-md text-green-700 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-1 focus:ring-green-500"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" /></svg>
+                          Download Invoice
+                        </button>
+                        <button
+                          onClick={() => handleSendInvoiceEmail(order)}
+                          disabled={sendingInvoiceId === order.id}
+                          className="inline-flex items-center px-3 py-2 border border-blue-500 shadow-sm text-sm leading-4 font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-70"
+                        >
+                          {sendingInvoiceId === order.id ? (
+                            <>
+                              <svg className="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              Sending...
+                            </>
+                          ) : (
+                            <>
+                              <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                              </svg>
+                              Email Invoice
+                            </>
+                          )}
                         </button>
                       </div>
                     </motion.div>

@@ -41,7 +41,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   return (
     <label
       className={clsx(
-        "flex items-center space-x-3 cursor-pointer text-gray-800 dark:text-gray-200",
+        "flex items-center space-x-3 cursor-pointer text-gray-800",
         { "cursor-not-allowed opacity-50": disabled }
       )}
     >
@@ -50,7 +50,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
         type="checkbox"
         className={clsx(
           "w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-brand-500",
-          "dark:bg-gray-700 dark:border-gray-600 dark:checked:bg-brand-500 dark:checked:border-brand-500",
+          "",
           "focus:ring-offset-0 focus:outline-none",
           className
         )}
@@ -391,7 +391,7 @@ const SignIn: React.FC = () => {
               animate={{ opacity: 1, height: "auto", y: 0 }}
               exit={{ opacity: 0, height: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="mb-6 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-sm rounded-lg border-l-4 border-red-500 flex items-start gap-3"
+              className="mb-6 p-4 bg-red-100 text-red-700 text-sm rounded-lg border-l-4 border-red-500 flex items-start gap-3"
             >
               <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
               <p>{errorMessage}</p>
@@ -439,12 +439,12 @@ const SignIn: React.FC = () => {
               <Checkbox
                 checked={isChecked}
                 onChange={setIsChecked}
-                className="text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 dark:border-gray-600"
+                className="text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 id="remember-me"
               />
               <label
                 htmlFor="remember-me"
-                className="ml-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400 cursor-pointer"
+                className="ml-2 text-xs sm:text-sm text-gray-600 cursor-pointer"
               >
                 Remember me
               </label>
@@ -456,7 +456,7 @@ const SignIn: React.FC = () => {
             >
               <a
                 href="/reset-password"
-                className="text-xs sm:text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors duration-200"
+                className="text-xs sm:text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-200"
               >
                 Forgot password?
               </a>
@@ -514,10 +514,10 @@ const SignIn: React.FC = () => {
 
         <div className="relative py-4 sm:py-5 mt-4 sm:mt-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+            <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-xs sm:text-sm">
-            <span className="px-2 text-gray-500 bg-white dark:bg-gray-800 dark:text-gray-400">
+            <span className="px-2 text-gray-500 bg-white">
               Or continue with
             </span>
           </div>

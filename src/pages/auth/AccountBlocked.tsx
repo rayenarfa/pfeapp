@@ -14,12 +14,12 @@ const AccountBlocked: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
+        className="max-w-md w-full bg-white rounded-xl shadow-xl overflow-hidden"
       >
         {/* Red warning bar */}
         <div className="h-2 bg-red-500" />
@@ -35,7 +35,7 @@ const AccountBlocked: React.FC = () => {
                 damping: 20,
                 delay: 0.2,
               }}
-              className="w-20 h-20 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-6"
+              className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mb-6"
             >
               <ShieldAlert className="h-10 w-10 text-red-500" />
             </motion.div>
@@ -44,7 +44,7 @@ const AccountBlocked: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-2xl font-bold text-gray-900 dark:text-white mb-3"
+              className="text-2xl font-bold text-gray-900 mb-3"
             >
               Account Suspended
             </motion.h1>
@@ -53,17 +53,17 @@ const AccountBlocked: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-gray-600 dark:text-gray-300 mb-8"
+              className="text-gray-600 mb-8"
             >
               Your account has been suspended due to a violation of our terms of
               service or community guidelines.
             </motion.p>
 
-            <div className="w-full p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg mb-6">
-              <h3 className="font-medium text-gray-900 dark:text-white mb-2">
+            <div className="w-full p-4 bg-gray-50 rounded-lg mb-6">
+              <h3 className="font-medium text-gray-900 mb-2">
                 What can you do?
               </h3>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+              <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-start">
                   <Mail className="h-5 w-5 text-gray-400 mr-2 flex-shrink-0 mt-0.5" />
                   <span>

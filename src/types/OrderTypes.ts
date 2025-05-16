@@ -23,7 +23,6 @@ export interface ShippingAddress {
   email: string;
   address: string;
   city: string;
-  state: string;
   zipCode: string;
 }
 

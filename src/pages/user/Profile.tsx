@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../../config/firebase/firebaseConfig";
 import { doc, getDoc, updateDoc, Timestamp } from "firebase/firestore";
-import { updateEmail } from "firebase/auth";
-import { motion } from "framer-motion";
-import { User, Mail, Phone, Calendar, Save, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  User, Mail, Phone, Calendar, Save, X, 
+  AlertTriangle, Trash2, Eye, EyeOff, Lock
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/layout/Navbar";
 import { toast } from "sonner";
+import { deleteUserAccount, updateUserEmail } from "../../services/auth/authService";
 
 
 interface UserData {
@@ -27,6 +31,7 @@ interface FirebaseUser {
 }
 
 const Profile: React.FC = () => {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -40,7 +45,13 @@ const Profile: React.FC = () => {
     phoneNumber: "",
   });
   const [updateLoading, setUpdateLoading] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<string>("profile");
+  
+  // Account deletion states
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [deletePassword, setDeletePassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const [deleteError, setDeleteError] = useState<string>("");
 
   useEffect(() => {
     const fetchUserData = async (user: FirebaseUser) => {
@@ -142,10 +153,19 @@ const Profile: React.FC = () => {
 
       // Update email if changed
       if (editableData.email !== userData.email) {
-        await updateEmail(user, editableData.email);
-        await updateDoc(userDocRef, {
-          email: editableData.email,
-        });
+        try {
+          // Use the new function that sends verification email
+          await updateUserEmail(editableData.email);
+          toast.success(`Verification email sent to ${editableData.email}. Please check your inbox and click the verification link to complete the email change.`);
+        } catch (emailError) {
+          console.error("Error updating email:", emailError);
+          if (emailError instanceof Error) {
+            toast.error(`Email update failed: ${emailError.message}`);
+          } else {
+            toast.error("Email update failed. Please try again later.");
+          }
+          throw emailError; // Rethrow to prevent updating UI
+        }
       }
 
       // Refresh user data
@@ -164,11 +184,13 @@ const Profile: React.FC = () => {
       console.error("Error updating profile:", error);
 
       if (error instanceof Error) {
-        // Handle specific errors
-        if (error.message.includes("requires-recent-login")) {
-          toast.error("Please sign in again before changing your email");
-        } else {
-          toast.error(`Error updating profile: ${error.message}`);
+        // Don't show duplicate notifications for email errors
+        if (!error.message.includes("Email update failed")) {
+          if (error.message.includes("requires-recent-login")) {
+            toast.error("Please sign in again before changing your email");
+          } else {
+            toast.error(`Error updating profile: ${error.message}`);
+          }
         }
       } else {
         toast.error("An unknown error occurred");
@@ -184,6 +206,37 @@ const Profile: React.FC = () => {
       ...prev,
       [name]: value,
     }));
+  };
+  
+  // Handle account deletion
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) {
+      setDeleteError("Please enter your password to confirm deletion");
+      return;
+    }
+    
+    setDeleteLoading(true);
+    setDeleteError("");
+    
+    try {
+      await deleteUserAccount(deletePassword);
+      
+      // Show success notification
+      toast.success("Your account has been successfully deleted");
+      
+      // Redirect to home page
+      navigate("/");
+    } catch (error) {
+      console.error("Failed to delete account:", error);
+      
+      if (error instanceof Error) {
+        setDeleteError(error.message);
+      } else {
+        setDeleteError("An unknown error occurred. Please try again.");
+      }
+    } finally {
+      setDeleteLoading(false);
+    }
   };
 
   if (loading) {
@@ -201,7 +254,7 @@ const Profile: React.FC = () => {
     );
   }
 
-  const tabs = [{ id: "profile", label: "Profile", icon: <User size={18} /> }];
+  // No tabs anymore
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -256,39 +309,15 @@ const Profile: React.FC = () => {
             </div>
           </div>
 
-          {/* Tabs Navigation */}
-          <div className="border-b border-gray-200">
-            <div className="flex overflow-x-auto scrollbar-hide">
-              {tabs.map((tab) => (
-                <motion.button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  whileHover={{ backgroundColor: "rgba(59, 130, 246, 0.05)" }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`flex items-center px-4 py-3 text-sm font-medium flex-1 justify-center ${
-                    activeTab === tab.id
-                      ? "text-blue-600 border-b-2 border-blue-600"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
-                >
-                  <span className="mr-2">{tab.icon}</span>
-                  {tab.label}
-                </motion.button>
-              ))}
-            </div>
-          </div>
-
           {/* Content Area */}
           <motion.div
-            key={activeTab}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
             className="p-6"
           >
-            {activeTab === "profile" && (
-              <div className="space-y-6">
-                {isEditing ? (
+            <div className="space-y-6">
+              {isEditing ? (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -448,30 +477,178 @@ const Profile: React.FC = () => {
                     initial={{ y: 10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="mt-6"
+                    className="mt-6 flex flex-wrap gap-3"
                   >
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={handleEditProfile}
-                      className="w-full md:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
+                      className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
                     >
                       <User size={16} className="mr-2" />
                       Edit Profile
                     </motion.button>
+                    
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setShowDeleteModal(true)}
+                      className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors flex items-center justify-center"
+                    >
+                      <Trash2 size={16} className="mr-2" />
+                      Delete Account
+                    </motion.button>
                   </motion.div>
                 )}
               </div>
-            )}
           </motion.div>
         </motion.div>
-        
       </div>
-      
+
+      {/* Delete Account Modal */}
+      <AnimatePresence>
+        {showDeleteModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="relative bg-white rounded-xl shadow-lg p-6 w-full max-w-md"
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center">
+                  <div className="mr-3 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <AlertTriangle size={22} className="text-red-600 " />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 ">
+                    Delete Account
+                  </h3>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setDeletePassword("");
+                    setDeleteError("");
+                  }}
+                  className="text-gray-500 hover:text-gray-700 "
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="text-gray-600  mb-4">
+                <p className="mb-4">
+                  <strong>This action cannot be undone.</strong> This will permanently delete your
+                  account, personal data, and remove access to all services.
+                </p>
+                <p className="text-sm bg-yellow-50  p-3 rounded-lg border-l-4 border-yellow-500 mb-4">
+                  For security reasons, please enter your password to confirm
+                  this action.
+                </p>
+
+                {deleteError && (
+                  <div className="text-red-600  text-sm p-3 rounded-lg bg-red-50  mb-4 border-l-4 border-red-500 flex items-center">
+                    <AlertTriangle size={18} className="mr-2 flex-shrink-0" />
+                    {deleteError}
+                  </div>
+                )}
+
+                <div className="mb-4">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-gray-700  mb-1"
+                  >
+                    Your Password
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <Lock className="w-4 h-4 text-gray-500" />
+                    </div>
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={deletePassword}
+                      onChange={(e) => setDeletePassword(e.target.value)}
+                      className="w-full pl-10 pr-10 py-2 border border-gray-300  rounded-lg focus:ring-red-500 focus:border-red-500 bg-white "
+                      placeholder="Enter your password"
+                      disabled={deleteLoading}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 "
+                    >
+                      {showPassword ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row-reverse gap-2">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  disabled={!deletePassword || deleteLoading}
+                  onClick={handleDeleteAccount}
+                  className={`px-4 py-2 rounded-lg font-medium text-white flex items-center justify-center ${!deletePassword || deleteLoading ? "bg-red-400" : "bg-red-600 hover:bg-red-700"}`}
+                >
+                  {deleteLoading ? (
+                    <>
+                      <svg
+                        className="w-5 h-5 mr-2 animate-spin"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 size={16} className="mr-2" />
+                      Confirm Deletion
+                    </>
+                  )}
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setDeletePassword("");
+                    setDeleteError("");
+                  }}
+                  className="px-4 py-2 rounded-lg font-medium text-gray-700 bg-gray-200  hover:bg-gray-300  flex items-center justify-center"
+                  disabled={deleteLoading}
+                >
+                  <X size={16} className="mr-2" />
+                  Cancel
+                </motion.button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
-    
   );
-  
 };
 
 export default Profile;

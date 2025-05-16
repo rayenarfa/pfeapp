@@ -15,7 +15,7 @@ import {
 } from "firebase/firestore";
 import { CartItem } from "../context/CartContext";
 import { Order, OrderItem } from "../types/OrderTypes";
-import { sendGiftCardEmail } from "./emailService";
+import { sendOrderConfirmationEmail } from "./emailService";
 import { confirmPayment } from "./stripeService";
 
 // Re-export the Order type
@@ -243,8 +243,8 @@ export const createOrder = async (
         id: docRef.id,
       };
 
-      await sendGiftCardEmail(orderWithId as Order);
-      console.log("Gift card keys email sent to:", order.customerEmail);
+      await sendOrderConfirmationEmail(orderWithId as Order);
+      console.log("Order confirmation with invoice sent to:", order.customerEmail);
     } catch (emailError) {
       // Don't fail the order creation if email sending fails
       console.error("Error sending email:", emailError);

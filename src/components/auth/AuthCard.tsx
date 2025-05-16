@@ -28,14 +28,14 @@ const AuthCard: React.FC<AuthCardProps> = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden"
+      className="w-full bg-white rounded-2xl shadow-xl overflow-hidden"
     >
       {/* Card content - improved padding for mobile */}
       <div className="p-4 sm:p-6 md:p-8">
         {/* Back button - improved for touch targets */}
         <button
           onClick={navigateToHome}
-          className="group inline-flex items-center mb-4 sm:mb-6 text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
+          className="group inline-flex items-center mb-4 sm:mb-6 text-gray-500 hover:text-indigo-600 transition-colors"
           aria-label="Back to home"
         >
           <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
@@ -65,10 +65,10 @@ const AuthCard: React.FC<AuthCardProps> = ({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
           >
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
               {title}
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+            <p className="text-sm sm:text-base text-gray-600">
               {subtitle}
             </p>
           </motion.div>
@@ -80,13 +80,13 @@ const AuthCard: React.FC<AuthCardProps> = ({
         {/* Alternate link - improved for mobile touch targets */}
         {alternateLink && (
           <div className="mt-6 sm:mt-8 text-center">
-            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+            <p className="text-gray-600 text-sm sm:text-base">
               {alternateLink.text.includes("Sign Up")
                 ? "Don't have an account?"
                 : "Already have an account?"}
               <Link
                 to={alternateLink.to}
-                className="ml-2 font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors"
+                className="ml-2 font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
               >
                 {alternateLink.text}
               </Link>

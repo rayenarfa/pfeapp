@@ -43,7 +43,7 @@ const AuthHeader: React.FC<AuthHeaderProps> = ({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="text-3xl sm:text-4xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400"
+        className="text-3xl sm:text-4xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600"
       >
         {title}
       </motion.h1>
@@ -53,7 +53,7 @@ const AuthHeader: React.FC<AuthHeaderProps> = ({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="text-gray-600 dark:text-gray-300 max-w-md mx-auto"
+        className="text-gray-600 max-w-md mx-auto"
       >
         {subtitle}
       </motion.p>
@@ -68,7 +68,7 @@ const AuthHeader: React.FC<AuthHeaderProps> = ({
         >
           <Link
             to={linkHref}
-            className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium text-sm transition-colors"
+            className="text-indigo-600 hover:text-indigo-500 font-medium text-sm transition-colors"
           >
             {linkText}
           </Link>

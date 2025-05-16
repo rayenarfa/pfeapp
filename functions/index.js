@@ -47,5 +47,9 @@ app.post("/create-payment-intent", async (req, res) => {
   }
 });
 
+// --- Import and mount sendInvoice endpoint ---
+import { sendInvoice } from './sendInvoice.js';
+app.post('/send-invoice', sendInvoice);
+
 // Export the Express API as a Firebase function
 export const stripe_api = onRequest(app);
